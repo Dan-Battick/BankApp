@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace DataAccessLibrary.Models
@@ -7,15 +8,29 @@ namespace DataAccessLibrary.Models
     public class Account
     {
         public Guid Id { get; set; }
+
+        [Required]
         public double Balance { get; set; }
+
+        [Required]
+        [MaxLength(40)]
         public string AccountType { get; set; }
+
         public List<Transaction> Transactions { get; set; } = new List<Transaction>();
+
+        [Required]
         public Guid CustomerId { get; set; }
 
-        public Account(double bal, string type)
+        public Account()
+        {
+            Balance = 0;
+            AccountType = "Chequing";
+            Id = Guid.NewGuid();
+        }
+        public Account(double bal, string atype)
         {
             Balance = bal;
-            AccountType = type;
+            AccountType = atype;
             Id = Guid.NewGuid();
         }
 
