@@ -1,0 +1,17 @@
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\BankAppUI.exe
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\BankAppUI.deps.json
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\BankAppUI.runtimeconfig.json
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\BankAppUI.runtimeconfig.dev.json
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\BankAppUI.dll
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\BankAppUI.pdb
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\obj\Debug\netcoreapp3.1\BankAppUI.csproj.AssemblyReference.cache
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\obj\Debug\netcoreapp3.1\BankAppUI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\obj\Debug\netcoreapp3.1\BankAppUI.AssemblyInfoInputs.cache
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\obj\Debug\netcoreapp3.1\BankAppUI.AssemblyInfo.cs
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\obj\Debug\netcoreapp3.1\BankAppUI.csproj.CoreCompileInputs.cache
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\obj\Debug\netcoreapp3.1\BankAppUI.dll
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\obj\Debug\netcoreapp3.1\BankAppUI.pdb
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\obj\Debug\netcoreapp3.1\BankAppUI.genruntimeconfig.cache
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\DataAccessLibrary.dll
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\DataAccessLibrary.pdb
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\obj\Debug\netcoreapp3.1\BankAppUI.csproj.CopyComplete

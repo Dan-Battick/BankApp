@@ -1,0 +1,32 @@
+Total time: 4 hours 35 mins
+
+ 
+
+1. Create and test model classes (50 mins)
+=> Transaction (15 mins)
+=> Account (20 mins)
+=> Customer (15 mins)
+
+ 
+
+
+2. Database config (15 mins)
+=> Nuget EF Core SQL Server
+=> DbContext class; add connection string
+
+ 
+
+3. Database creation (10 mins)
+=> Migration
+=> Check for errors & optimization
+=> Update Database
+
+ 
+
+4. Test that classes can connect to database for save and query operations (20 mins)
+
+ 
+
+5. User Interface (3 hours)
+=> Design menus (1 hour)
+=> Implement and test UI (2 hours)
