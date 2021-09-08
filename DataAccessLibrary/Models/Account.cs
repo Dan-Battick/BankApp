@@ -87,7 +87,7 @@ namespace DataAccessLibrary.Models
 
         public override string ToString()
         {
-            return $"{AccountType} account: Current balance is {Balance.ToString("C")}";
+            return $"{AccountType} account: Current balance is {Balance.ToString("C")} belonging to customer with ID{CustomerId}";
 
         }
 
