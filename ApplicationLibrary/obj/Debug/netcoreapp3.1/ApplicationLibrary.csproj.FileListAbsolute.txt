@@ -1,0 +1,10 @@
+C:\Users\Daniel Battick\source\repos\BankApp\ApplicationLibrary\bin\Debug\netcoreapp3.1\ApplicationLibrary.deps.json
+C:\Users\Daniel Battick\source\repos\BankApp\ApplicationLibrary\bin\Debug\netcoreapp3.1\ApplicationLibrary.dll
+C:\Users\Daniel Battick\source\repos\BankApp\ApplicationLibrary\bin\Debug\netcoreapp3.1\ApplicationLibrary.pdb
+C:\Users\Daniel Battick\source\repos\BankApp\ApplicationLibrary\obj\Debug\netcoreapp3.1\ApplicationLibrary.csproj.AssemblyReference.cache
+C:\Users\Daniel Battick\source\repos\BankApp\ApplicationLibrary\obj\Debug\netcoreapp3.1\ApplicationLibrary.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Daniel Battick\source\repos\BankApp\ApplicationLibrary\obj\Debug\netcoreapp3.1\ApplicationLibrary.AssemblyInfoInputs.cache
+C:\Users\Daniel Battick\source\repos\BankApp\ApplicationLibrary\obj\Debug\netcoreapp3.1\ApplicationLibrary.AssemblyInfo.cs
+C:\Users\Daniel Battick\source\repos\BankApp\ApplicationLibrary\obj\Debug\netcoreapp3.1\ApplicationLibrary.csproj.CoreCompileInputs.cache
+C:\Users\Daniel Battick\source\repos\BankApp\ApplicationLibrary\obj\Debug\netcoreapp3.1\ApplicationLibrary.dll
+C:\Users\Daniel Battick\source\repos\BankApp\ApplicationLibrary\obj\Debug\netcoreapp3.1\ApplicationLibrary.pdb

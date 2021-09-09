@@ -65,3 +65,5 @@ C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\r
 C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
 C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\Humanizer.dll
 C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\ApplicationLibrary.dll
+C:\Users\Daniel Battick\source\repos\BankApp\BankAppUI\bin\Debug\netcoreapp3.1\ApplicationLibrary.pdb

@@ -24,14 +24,15 @@ namespace DataAccessLibrary.Models
         public Account()
         {
             Balance = 0;
-            AccountType = "Chequing";
+            AccountType = "Default";
             Id = Guid.NewGuid();
         }
-        public Account(double bal, string atype)
+        public Account(double bal, string atype, Guid custId)
         {
             Balance = bal;
             AccountType = atype;
             Id = Guid.NewGuid();
+            CustomerId = custId;
         }
 
         public void deposit(double amt)
@@ -87,7 +88,7 @@ namespace DataAccessLibrary.Models
 
         public override string ToString()
         {
-            return $"{AccountType} account: Current balance is {Balance.ToString("C")} belonging to customer with ID{CustomerId}";
+            return $"{AccountType} account: Current balance is {Balance.ToString("C")} belonging to customer with ID {CustomerId}";
 
         }
 

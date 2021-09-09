@@ -20,13 +20,13 @@ namespace DataAccessLibrary.Models
             Id = Guid.NewGuid();
         }
 
-        public Account createAccount(double balance, string atype)
+        /*public Account createAccount(double balance, string atype)
         {
             Account acc = new Account(balance, atype);
             acc.CustomerId = Id;
             Accounts.Add(acc);
             return acc;
-        }
+        }*/
         /// <summary>
         /// Retrieve the accounts that the customer has.
         /// </summary>
@@ -52,7 +52,7 @@ namespace DataAccessLibrary.Models
 
         public override string ToString()
         {
-            return $"Customer Name: {Name}\nAccount(s):{getAccounts()}";
+            return $"Customer Name: {Name}";
         }
     }
 }
