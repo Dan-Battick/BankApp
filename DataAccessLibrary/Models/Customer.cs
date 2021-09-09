@@ -43,7 +43,7 @@ namespace DataAccessLibrary.Models
             {
                 foreach (Account acc in Accounts)
                 {
-                    str += $"\n{numAccounts}. {acc.ToString()}";
+                    str += $"\n{numAccounts} - {acc.ToString()}";
                     numAccounts++;
                 }
             }
@@ -52,7 +52,7 @@ namespace DataAccessLibrary.Models
 
         public override string ToString()
         {
-            return $"Customer Name: {Name}";
+            return $"Customer Name: {Name} \nAccount(s): {getAccounts()}";
         }
     }
 }
