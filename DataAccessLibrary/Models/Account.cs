@@ -35,15 +35,15 @@ namespace DataAccessLibrary.Models
             CustomerId = custId;
         }
 
-        public void deposit(double amt)
+        /*public void deposit(double amt)
         {
             Balance += amt;
             Transaction trans = new Transaction(amt, "Deposit");
             trans.AccountId = Id;
             Transactions.Add(trans);
-        }
+        }*/
 
-        public bool withdraw(double amt)
+        /*public bool withdraw(double amt)
         {
             if ((Balance - amt) < 0)
             {
@@ -58,7 +58,7 @@ namespace DataAccessLibrary.Models
                 Transactions.Add(trans);
                 return true;
             }
-        }
+        }*/
 
         public void queryAccount()
         {

@@ -15,6 +15,7 @@ namespace BankAppUI
         static void Main(string[] args)
         {
             HomeScreen();
+            //DepositFunds();
         }
 
         public static void HomeScreen()
@@ -43,7 +44,8 @@ namespace BankAppUI
                     break;
                 case "3":
                     Console.Clear();
-                    Console.WriteLine("\nYou would like to deposit funds!");
+                    DepositFunds();
+                    HomeScreen();
                     break;
                 case "4":
                     Console.Clear();
@@ -154,12 +156,20 @@ namespace BankAppUI
             return customers;
         }
 
-        public static void OpenAccForExistingCust()
+        private static Customer GetCustomer(string message)
         {
             var customers = ViewCustomers();
-            string customerNum = Utility.GetRawInput("Which customer would you like to open the new account for? Enter the customer #: ");
+            string customerNum = Utility.GetRawInput(message);
             int actualCustNum = int.Parse(customerNum) - 1;
-            Customer existingCust = customers[actualCustNum];
+            Customer cust = customers[actualCustNum];
+            return cust;
+        } 
+
+        public static void OpenAccForExistingCust()
+        {
+            Customer existingCust = GetCustomer("Which customer would you like to open the new account for? Enter the customer #: ");
+            Console.Clear();
+            Console.WriteLine($"You are opening a new account for {existingCust.Name}, ID {existingCust.Id}");
             Account acc = CreateNewAccount(existingCust.Id);
             using (var db = new BankContext())
             {
@@ -170,6 +180,43 @@ namespace BankAppUI
             Console.WriteLine($"New account has been opened for {existingCust.Name}.");
             Utility.PrintEnterMessage();
 
+            Console.Clear();
+        }
+
+        private static Account GetAccount(Customer cust, string message)
+        {
+            string accountNum = Utility.GetRawInput(message);
+            int actualAccNum = int.Parse(accountNum) - 1;
+            Account acc = cust.Accounts[actualAccNum];
+            return acc;
+        }
+
+        public static void DepositFunds()
+        {
+            Console.WriteLine("********DEPOSIT FUNDS********");
+            Customer cust = GetCustomer("\nWhich customer owns the account to deposit funds into? Enter the customer #: ");
+            Console.Clear();
+
+            Console.WriteLine($"{cust.Name} with ID {cust.Id} has the following accounts:\n");
+            int i = 1;
+            foreach (var acct in cust.Accounts)
+            {
+                Console.WriteLine($"Account # {i} - {acct.AccountType} account; Balance {acct.Balance.ToString("C")}; ID {acct.Id}");
+                i++;
+            }
+            Account acc = GetAccount(cust, "\nWhich account should the funds be deposited into? Enter the account #: ");
+            double amount = Utility.GetNumInput("\nEnter the amount to be deposited: ");
+            acc.Balance += amount;
+            Transaction trans = new Transaction(amount, "Deposit", acc.Id);
+            Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance}");
+            using (var db = new BankContext())
+            {
+                db.Accounts.Update(acc);
+                db.Transactions.Add(trans);
+                db.SaveChanges();
+            }
+
+            Utility.PrintEnterMessage();
             Console.Clear();
         }
     }

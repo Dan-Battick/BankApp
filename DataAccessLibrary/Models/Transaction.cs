@@ -30,12 +30,13 @@ namespace DataAccessLibrary
             Id = Guid.NewGuid();
         }
 
-        public Transaction(double amt, string ttype)
+        public Transaction(double amt, string ttype, Guid acctId)
         {
             TransactionAmount = amt;
             TransactionDate = DateTime.Now;
             TransactionType = ttype;
-            Id = Guid.NewGuid(); 
+            Id = Guid.NewGuid();
+            AccountId = acctId;
         }
 
 
