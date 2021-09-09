@@ -49,7 +49,8 @@ namespace BankAppUI
                     break;
                 case "4":
                     Console.Clear();
-                    Console.WriteLine("\nYou would like to withdraw funds!");
+                    WithDrawFunds();
+                    HomeScreen();
                     break;
                 case "5":
                     Console.Clear();
@@ -208,6 +209,35 @@ namespace BankAppUI
             double amount = Utility.GetNumInput("\nEnter the amount to be deposited: ");
             acc.Balance += amount;
             Transaction trans = new Transaction(amount, "Deposit", acc.Id);
+            Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance}");
+            using (var db = new BankContext())
+            {
+                db.Accounts.Update(acc);
+                db.Transactions.Add(trans);
+                db.SaveChanges();
+            }
+
+            Utility.PrintEnterMessage();
+            Console.Clear();
+        }
+
+        public static void WithDrawFunds()
+        {
+            Console.WriteLine("********WITHDRAW FUNDS********");
+            Customer cust = GetCustomer("\nWhich customer owns the account to withdraw funds from? Enter the customer #: ");
+            Console.Clear();
+
+            Console.WriteLine($"{cust.Name} with ID {cust.Id} has the following accounts:\n");
+            int i = 1;
+            foreach (var acct in cust.Accounts)
+            {
+                Console.WriteLine($"Account # {i} - {acct.AccountType} account; Balance {acct.Balance.ToString("C")}; ID {acct.Id}");
+                i++;
+            }
+            Account acc = GetAccount(cust, "\nWhich account should the funds be withdrawn from? Enter the account #: ");
+            double amount = Utility.GetNumInput("\nEnter the amount to be withdrawn: ");
+            acc.Balance -= amount;
+            Transaction trans = new Transaction(amount, "Withdraw", acc.Id);
             Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance}");
             using (var db = new BankContext())
             {
