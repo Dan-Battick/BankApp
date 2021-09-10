@@ -17,7 +17,7 @@ namespace BankAppUI
         }
 
         /// <summary>
-        /// The main controller for the application.
+        /// The main controller for the application to execute user operations.
         /// </summary>
         public static void ApplicationScreen()
         {
@@ -105,18 +105,18 @@ namespace BankAppUI
         {
             Console.WriteLine("*********OPEN NEW ACCOUNT*********\n");
             Customer cust = GetCustomer("Which customer would you like to open the new account for? Enter the customer #  or -1 to CANCEL THE OPERATION: ");
-            if (cust.Name == "")
+            if (cust.Name == "")  // The user has entered -1 to cancel the operation
             {
                 Console.WriteLine("Operation cancelled.");
                 Utility.PrintEnterMessage();
                 Console.Clear();
             } 
-            else if (cust.Name == "None")
+            else if (cust.Name == "None")  // There are no users in the database
             {
                 Utility.PrintEnterMessage();
                 Console.Clear();
             }
-            else
+            else  // The user has chosen a customer
             {
                 Console.Clear();
                 Console.WriteLine($"You are opening a new account for {cust.Name}, ID {cust.Id}");
@@ -138,18 +138,18 @@ namespace BankAppUI
         {
             Console.WriteLine("********DEPOSIT FUNDS********");
             Customer cust = GetCustomer("\nWhich customer owns the account to deposit funds into? Enter the customer # or -1 to CANCEL THE OPERATION: ");
-            if (cust.Name == "")
+            if (cust.Name == "")  // The user has entered -1 to cancel the operation
             {
                 Console.WriteLine("Operation cancelled.");
                 Utility.PrintEnterMessage();
                 Console.Clear();
             }
-            else if (cust.Name == "None")
+            else if (cust.Name == "None")  // There are no users in the database
             {
                 Utility.PrintEnterMessage();
                 Console.Clear();
             }
-            else
+            else  // The user has chosen a customer
             {
                 Console.Clear();
 
@@ -161,27 +161,53 @@ namespace BankAppUI
                     i++;
                 }
                 Account acc = GetAccount(cust, "\nWhich account should the funds be deposited into? Enter the account # or -1 to CANCEL THE OPERATION: ");
-                if (acc.AccountType == "Default")
+                if (acc.AccountType == "Default")  // The user has entered -1 to cancel the operation 
                 {
                     Console.WriteLine("Operation cancelled.");
                     Utility.PrintEnterMessage();
                     Console.Clear();
                 }
-                else
+                else  // The user has chosen an account
                 {
-                    double amount = Utility.GetNumInput("\nEnter the amount to be deposited: ");
-                    acc.Balance += amount;
-                    Transaction trans = new Transaction(amount, "Deposit", acc.Id);
-                    Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
-                    using (var db = new BankContext())
+                    bool good_amt = false;
+                    do
                     {
-                        db.Accounts.Update(acc);
-                        db.Transactions.Add(trans);
-                        db.SaveChanges();
-                    }
+                        try  // Ensure that the amount to deposit is correct logically
+                        {
+                            double amount = Utility.GetNumInput("\nEnter the amount to be deposited: ");
+                            if (amount <= 0)
+                            {
+                                Console.WriteLine("Amount must be greater than 0. Try again.");
+                                good_amt = false;
+                            }
+                            else if (amount % 10 != 0)
+                            {
+                                Console.WriteLine("Amount must be a multiple of 10. Try again.");
+                                good_amt = false;
+                            }
+                            else
+                            {
+                                good_amt = true;
+                                acc.Balance += amount;
+                                Transaction trans = new Transaction(amount, "Deposit", acc.Id);
+                                Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
+                                using (var db = new BankContext())
+                                {
+                                    db.Accounts.Update(acc);
+                                    db.Transactions.Add(trans);
+                                    db.SaveChanges();
+                                }
 
-                    Utility.PrintEnterMessage();
-                    Console.Clear();
+                                Utility.PrintEnterMessage();
+                                Console.Clear();
+                            }
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine("Error: The amount must be a NUMBER that is greater than 0 and a multiple of 10. Try again.");
+                            good_amt = false;
+                        }
+                    } while (!good_amt);                    
                 }
             }
         }
@@ -190,18 +216,18 @@ namespace BankAppUI
         {
             Console.WriteLine("********WITHDRAW FUNDS********");
             Customer cust = GetCustomer("\nWhich customer owns the account to withdraw funds from? Enter the customer # or -1 to CANCEL THE OPERATION: ");
-            if (cust.Name == "")
+            if (cust.Name == "")  // The user has entered -1 to cancel the operation 
             {
                 Console.WriteLine("Operation cancelled.");
                 Utility.PrintEnterMessage();
                 Console.Clear();
             }
-            else if (cust.Name == "None")
+            else if (cust.Name == "None")  // There are no customers in the database
             {
                 Utility.PrintEnterMessage();
                 Console.Clear();
             }
-            else
+            else  // The user has chosen a customer
             {
                 Console.Clear();
 
@@ -213,27 +239,58 @@ namespace BankAppUI
                     i++;
                 }
                 Account acc = GetAccount(cust, "\nWhich account should the funds be withdrawn from? Enter the account # or -1 to CANCEL THE OPERATION: ");
-                if (acc.AccountType == "Default")
+                if (acc.AccountType == "Default")  // The user has entered -1 to cancel the operation 
                 {
                     Console.WriteLine("Operation cancelled.");
                     Utility.PrintEnterMessage();
                     Console.Clear();
                 }
-                else
+                else  // The user has chosen an account
                 {
-                    double amount = Utility.GetNumInput("\nEnter the amount to be withdrawn: ");
-                    acc.Balance -= amount;
-                    Transaction trans = new Transaction(amount, "Withdraw", acc.Id);
-                    Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
-                    using (var db = new BankContext())
+                    bool good_amt = false;
+                    do
                     {
-                        db.Accounts.Update(acc);
-                        db.Transactions.Add(trans);
-                        db.SaveChanges();
-                    }
+                        try  // Ensure that the amount to withdraw is correct logically
+                        {
+                            double amount = Utility.GetNumInput("\nEnter the amount to be withdrawn: ");
+                            if (amount <= 0)
+                            {
+                                Console.WriteLine("Amount must be greater than 0. Try again.");
+                                good_amt = false;
+                            }
+                            else if (amount % 10 != 0)
+                            {
+                                Console.WriteLine("Amount must be a multiple of 10. Try again.");
+                                good_amt = false;
+                            }
+                            else if (amount > acc.Balance)
+                            {
+                                Console.WriteLine("You have insufficient funds to carry out this transaction. Try again.");
+                                good_amt = false;
+                            }
+                            else
+                            {
+                                good_amt = true;
+                                acc.Balance -= amount;
+                                Transaction trans = new Transaction(amount, "Withdraw", acc.Id);
+                                Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
+                                using (var db = new BankContext())
+                                {
+                                    db.Accounts.Update(acc);
+                                    db.Transactions.Add(trans);
+                                    db.SaveChanges();
+                                }
 
-                    Utility.PrintEnterMessage();
-                    Console.Clear();
+                                Utility.PrintEnterMessage();
+                                Console.Clear();
+                            }
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine("Error: The amount must be a NUMBER that is greater than 0 and a multiple of 10. Try again.");
+                            good_amt = false;
+                        }
+                    } while (!good_amt);
                 }
             }
         }
@@ -242,18 +299,18 @@ namespace BankAppUI
         {
             Console.WriteLine("********QUERY ACCOUNT TRANSACTIONS********");
             Customer cust = GetCustomer("\nWhich customer owns the account that you would like to query? Enter the customer # or -1 to CANCEL THE OPERATION: ");
-            if (cust.Name == "")
+            if (cust.Name == "")  // The user has entered -1 to cancel the operation
             {
                 Console.WriteLine("Operation cancelled.");
                 Utility.PrintEnterMessage();
                 Console.Clear();
             }
-            else if (cust.Name == "None")
+            else if (cust.Name == "None")  // There are no customers in the database
             {
                 Utility.PrintEnterMessage();
                 Console.Clear();
             }
-            else
+            else  // The user has chosen a customer
             {
                 Console.Clear();
 
@@ -265,7 +322,7 @@ namespace BankAppUI
                     i++;
                 }
                 Account acc = GetAccount(cust, "\nWhich account would you like to query for past transactions? Enter the account # or -1 to CANCEL THE OPERATION: ");
-                if (acc.AccountType == "Default")
+                if (acc.AccountType == "Default")  // The user has entered -1 to cancel the operation
                 {
                     Console.WriteLine("Operation cancelled.");
                     Utility.PrintEnterMessage();
@@ -282,24 +339,67 @@ namespace BankAppUI
 
         private static Account CreateNewAccount(Guid customerId)
         {
-            string accountType = Utility.GetRawInput("Account type (Enter the number 1 for SAVINGS OR the number 2 for CHEQUING): ");
-            if (accountType == "1")
+            string accountType = "";
+            bool good_accType = false;
+            do
             {
-                accountType = "Savings";
-            }
-            else if (accountType == "2")
+                accountType = Utility.GetRawInput("Account type (Enter the number 1 for SAVINGS OR the number 2 for CHEQUING): ");
+                if (accountType == "1")
+                {
+                    accountType = "Savings";
+                    good_accType = true;
+                }
+                else if (accountType == "2")
+                {
+                    accountType = "Chequing";
+                    good_accType = true;
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect input. Please enter only a 1 or a 2 to indicate the account type.");
+                    good_accType = false;
+                }
+            } while (!good_accType);
+
+            bool good_input = false;
+            do
             {
-                accountType = "Chequing";
-            }
-            else
-            {
-                Console.WriteLine("Incorrect input. Please enter only a 1 or a 2 to indicate the account type.");
-            }
-            double startingBalance = Utility.GetNumInput("Enter the starting balance for this account: ");
-            Account acc = new Account(startingBalance, accountType, customerId);
-            return acc;
+                try
+                {
+                    bool good_balance = false;
+                    do
+                    {
+                        double startingBalance = Utility.GetNumInput("Enter the starting balance for this account: ");
+                        if (startingBalance <= 0)
+                        {
+                            Console.WriteLine("Balance amount needs to be more than 0. Try again.");
+                            good_balance = false;
+                        }
+                        else if (startingBalance % 10 != 0)
+                        {
+                            Console.WriteLine("The balance amount should only be a multiple of 10. Try again.");
+                            good_balance = false;
+                        }
+                        else
+                        {
+                            Account acc = new Account(startingBalance, accountType, customerId);
+                            return acc;
+                        }
+                    } while (!good_balance);
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Error: The balance amount should be a number that is greater than 0 and a multiple of 10. Try again.");
+                    good_input = false;
+                }
+            } while (!good_input);
+            return new Account();
         }
 
+        /// <summary>
+        /// Returns and also prints a list of the customers within the database. Used in the GetCustomer() method
+        /// </summary>
+        /// <returns>Returns a list of type Customer</returns>
         private static List<Customer> ViewCustomers()
         {
             var db = new BankContext();
@@ -334,6 +434,11 @@ namespace BankAppUI
             }
         }
 
+        /// <summary>
+        /// Calls the ViewCustomers() method to display a list customers and allows the user to select a customer of choice.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns>Returns a Customer object for further operations to be carried out on.</returns>
         private static Customer GetCustomer(string message)
         {
             var customers = ViewCustomers();
@@ -342,7 +447,7 @@ namespace BankAppUI
                 return new Customer("None");
             } else
             {
-                bool input = false;
+                bool input = false;  // Loop the code in the try block if the user input is incorrect
                 do
                 {
                     try
@@ -373,9 +478,16 @@ namespace BankAppUI
             }
         }
 
+        /// <summary>
+        /// Displays all the accounts that a customer has and allows the user to select a particular account for
+        /// various operations to be carried out on.
+        /// </summary>
+        /// <param name="cust"></param>
+        /// <param name="message"></param>
+        /// <returns>Returns an Account object for further operations to be carried out on.</returns>
         private static Account GetAccount(Customer cust, string message)
         {
-            bool input = false;
+            bool input = false;  // Loop the code in the try block if the user input is incorrect
             do
             {
                 try
@@ -404,6 +516,13 @@ namespace BankAppUI
             return new Account();
         }
 
+
+        /// <summary>
+        /// Used to print out the last 10 transactions done on an account. Used in the QueryAccount() method.
+        /// </summary>
+        /// <param name="acc">
+        /// This is the account that is being queried.
+        /// </param>
         private static void ShowTransactions(Account acc)
         {
             var db = new BankContext();
