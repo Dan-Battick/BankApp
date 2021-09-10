@@ -148,20 +148,29 @@ namespace BankAppUI
                     Console.WriteLine($"Account # {i} - {acct.AccountType} account; Balance {acct.Balance.ToString("C")}; ID {acct.Id}");
                     i++;
                 }
-                Account acc = GetAccount(cust, "\nWhich account should the funds be deposited into? Enter the account #: ");
-                double amount = Utility.GetNumInput("\nEnter the amount to be deposited: ");
-                acc.Balance += amount;
-                Transaction trans = new Transaction(amount, "Deposit", acc.Id);
-                Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
-                using (var db = new BankContext())
+                Account acc = GetAccount(cust, "\nWhich account should the funds be deposited into? Enter the account # or -1 to CANCEL THE OPERATION: ");
+                if (acc.AccountType == "Default")
                 {
-                    db.Accounts.Update(acc);
-                    db.Transactions.Add(trans);
-                    db.SaveChanges();
+                    Console.WriteLine("Operation cancelled.");
+                    Utility.PrintEnterMessage();
+                    Console.Clear();
                 }
+                else
+                {
+                    double amount = Utility.GetNumInput("\nEnter the amount to be deposited: ");
+                    acc.Balance += amount;
+                    Transaction trans = new Transaction(amount, "Deposit", acc.Id);
+                    Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
+                    using (var db = new BankContext())
+                    {
+                        db.Accounts.Update(acc);
+                        db.Transactions.Add(trans);
+                        db.SaveChanges();
+                    }
 
-                Utility.PrintEnterMessage();
-                Console.Clear();
+                    Utility.PrintEnterMessage();
+                    Console.Clear();
+                }
             }
         }
 
@@ -186,20 +195,29 @@ namespace BankAppUI
                     Console.WriteLine($"Account # {i} - {acct.AccountType} account; Balance {acct.Balance.ToString("C")}; ID {acct.Id}");
                     i++;
                 }
-                Account acc = GetAccount(cust, "\nWhich account should the funds be withdrawn from? Enter the account #: ");
-                double amount = Utility.GetNumInput("\nEnter the amount to be withdrawn: ");
-                acc.Balance -= amount;
-                Transaction trans = new Transaction(amount, "Withdraw", acc.Id);
-                Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
-                using (var db = new BankContext())
+                Account acc = GetAccount(cust, "\nWhich account should the funds be withdrawn from? Enter the account # or -1 to CANCEL THE OPERATION: ");
+                if (acc.AccountType == "Default")
                 {
-                    db.Accounts.Update(acc);
-                    db.Transactions.Add(trans);
-                    db.SaveChanges();
+                    Console.WriteLine("Operation cancelled.");
+                    Utility.PrintEnterMessage();
+                    Console.Clear();
                 }
+                else
+                {
+                    double amount = Utility.GetNumInput("\nEnter the amount to be withdrawn: ");
+                    acc.Balance -= amount;
+                    Transaction trans = new Transaction(amount, "Withdraw", acc.Id);
+                    Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
+                    using (var db = new BankContext())
+                    {
+                        db.Accounts.Update(acc);
+                        db.Transactions.Add(trans);
+                        db.SaveChanges();
+                    }
 
-                Utility.PrintEnterMessage();
-                Console.Clear();
+                    Utility.PrintEnterMessage();
+                    Console.Clear();
+                }
             }
         }
 
@@ -224,11 +242,19 @@ namespace BankAppUI
                     Console.WriteLine($"Account # {i} - {acct.AccountType} account; Balance {acct.Balance.ToString("C")}; ID {acct.Id}");
                     i++;
                 }
-                Account acc = GetAccount(cust, "\nWhich account would you like to query for past transactions? Enter the account #: ");
-                ShowTransactions(acc);
+                Account acc = GetAccount(cust, "\nWhich account would you like to query for past transactions? Enter the account # or -1 to CANCEL THE OPERATION: ");
+                if (acc.AccountType == "Default")
+                {
+                    Console.WriteLine("Operation cancelled.");
+                    Utility.PrintEnterMessage();
+                    Console.Clear();
+                } else
+                {
+                    ShowTransactions(acc);
 
-                Utility.PrintEnterMessage();
-                Console.Clear();
+                    Utility.PrintEnterMessage();
+                    Console.Clear();
+                }
             }
         }
 
@@ -282,24 +308,65 @@ namespace BankAppUI
         private static Customer GetCustomer(string message)
         {
             var customers = ViewCustomers();
-            string customerNum = Utility.GetRawInput(message);
-            if (customerNum == "-1")
+            bool input = false;
+            do
             {
-                return new Customer("");
-            } else
-            {
-                int actualCustNum = int.Parse(customerNum) - 1;
-                Customer cust = customers[actualCustNum];
-                return cust;
-            }
+                try
+                {
+                    string customerNum = Utility.GetRawInput(message);
+
+                    if (customerNum == "-1")
+                    {
+                        return new Customer("");
+                    }
+                    else
+                    {
+                        int actualCustNum = int.Parse(customerNum) - 1;
+                        Customer cust = customers[actualCustNum];
+                        return cust;
+                    }
+                }
+                catch (Exception e)
+                {
+                    if ((e is FormatException) || (e is ArgumentOutOfRangeException))
+                    {
+                        Console.WriteLine("Incorrect input. Enter the number that corresponds to the customer of your choice.");
+                        input = false;
+                    }
+                }
+            } while (!input);
+            return new Customer("");
         }
 
         private static Account GetAccount(Customer cust, string message)
         {
-            string accountNum = Utility.GetRawInput(message);
-            int actualAccNum = int.Parse(accountNum) - 1;
-            Account acc = cust.Accounts[actualAccNum];
-            return acc;
+            bool input = false;
+            do
+            {
+                try
+                {
+                    string accountNum = Utility.GetRawInput(message);
+                    if (accountNum == "-1")
+                    {
+                        return new Account();
+                    }
+                    else
+                    {
+                        int actualAccNum = int.Parse(accountNum) - 1;
+                        Account acc = cust.Accounts[actualAccNum];
+                        return acc;
+                    }
+                }
+                catch (Exception e)
+                {
+                    if ((e is FormatException) || (e is ArgumentOutOfRangeException))
+                    {
+                        Console.WriteLine("Incorrect input. Enter the number that corresponds to the account of your choice.");
+                        input = false;
+                    }
+                }
+            } while (!input);
+            return new Account();
         }
 
         private static void ShowTransactions(Account acc)
