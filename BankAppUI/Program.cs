@@ -33,6 +33,7 @@ namespace BankAppUI
                 case "1":
                     Console.Clear();
                     CreateNewCustomer();
+             
                     ApplicationScreen();
                     break;
                 case "2":
@@ -72,119 +73,163 @@ namespace BankAppUI
         public static void CreateNewCustomer()
         {
             Console.WriteLine("*********CREATE NEW CUSTOMER*********\n");
-            string name = Utility.GetRawInput("Enter the name of the customer: ");
-            Customer cust = new Customer(name);
-
-            Account acc = CreateNewAccount(cust.Id);
-
-            using (var db = new BankContext())
+            string name = Utility.GetRawInput("Enter the name of the customer or -1 to CANCEL operation: ");
+            if (name == "-1")
             {
-                db.Customers.Add(cust);
-                db.Accounts.Add(acc);
-                db.SaveChanges();
+                Console.WriteLine("Operation cancelled.");
+                Utility.PrintEnterMessage();
+                Console.Clear();
+            } else
+            {
+                Customer cust = new Customer(name);
+
+                Account acc = CreateNewAccount(cust.Id);
+
+                using (var db = new BankContext())
+                {
+                    db.Customers.Add(cust);
+                    db.Accounts.Add(acc);
+                    db.SaveChanges();
+                }
+
+                Console.WriteLine($"Customer {name} has been created and added to the database.");
+                Utility.PrintEnterMessage();
+
+                Console.Clear();
             }
-
-            Console.WriteLine($"Customer {name} has been created and added to the database.");
-            Utility.PrintEnterMessage();
-
-            Console.Clear();
         }
 
         public static void OpenNewAccount()
         {
             Console.WriteLine("*********OPEN NEW ACCOUNT*********\n");
-            Customer cust = GetCustomer("Which customer would you like to open the new account for? Enter the customer #: ");
-            Console.Clear();
-            Console.WriteLine($"You are opening a new account for {cust.Name}, ID {cust.Id}");
-            Account acc = CreateNewAccount(cust.Id);
-            using (var db = new BankContext())
+            Customer cust = GetCustomer("Which customer would you like to open the new account for? Enter the customer #  or -1 to CANCEL THE OPERATION: ");
+            if (cust.Name == "")
             {
-                db.Accounts.Add(acc);
-                db.SaveChanges();
+                Console.WriteLine("Operation cancelled.");
+                Utility.PrintEnterMessage();
+                Console.Clear();
             }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine($"You are opening a new account for {cust.Name}, ID {cust.Id}");
+                Account acc = CreateNewAccount(cust.Id);
+                using (var db = new BankContext())
+                {
+                    db.Accounts.Add(acc);
+                    db.SaveChanges();
+                }
 
-            Console.WriteLine($"New account has been opened for {cust.Name}.");
-            Utility.PrintEnterMessage();
+                Console.WriteLine($"New account has been opened for {cust.Name}.");
+                Utility.PrintEnterMessage();
 
-            Console.Clear();
+                Console.Clear();
+            }
         }
 
         public static void DepositFunds()
         {
             Console.WriteLine("********DEPOSIT FUNDS********");
-            Customer cust = GetCustomer("\nWhich customer owns the account to deposit funds into? Enter the customer #: ");
-            Console.Clear();
-
-            Console.WriteLine($"{cust.Name} with ID {cust.Id} has the following accounts:\n");
-            int i = 1;
-            foreach (var acct in cust.Accounts)
+            Customer cust = GetCustomer("\nWhich customer owns the account to deposit funds into? Enter the customer # or -1 to CANCEL THE OPERATION: ");
+            if (cust.Name == "")
             {
-                Console.WriteLine($"Account # {i} - {acct.AccountType} account; Balance {acct.Balance.ToString("C")}; ID {acct.Id}");
-                i++;
+                Console.WriteLine("Operation cancelled.");
+                Utility.PrintEnterMessage();
+                Console.Clear();
             }
-            Account acc = GetAccount(cust, "\nWhich account should the funds be deposited into? Enter the account #: ");
-            double amount = Utility.GetNumInput("\nEnter the amount to be deposited: ");
-            acc.Balance += amount;
-            Transaction trans = new Transaction(amount, "Deposit", acc.Id);
-            Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
-            using (var db = new BankContext())
+            else
             {
-                db.Accounts.Update(acc);
-                db.Transactions.Add(trans);
-                db.SaveChanges();
-            }
+                Console.Clear();
 
-            Utility.PrintEnterMessage();
-            Console.Clear();
+                Console.WriteLine($"{cust.Name} with ID {cust.Id} has the following accounts:\n");
+                int i = 1;
+                foreach (var acct in cust.Accounts)
+                {
+                    Console.WriteLine($"Account # {i} - {acct.AccountType} account; Balance {acct.Balance.ToString("C")}; ID {acct.Id}");
+                    i++;
+                }
+                Account acc = GetAccount(cust, "\nWhich account should the funds be deposited into? Enter the account #: ");
+                double amount = Utility.GetNumInput("\nEnter the amount to be deposited: ");
+                acc.Balance += amount;
+                Transaction trans = new Transaction(amount, "Deposit", acc.Id);
+                Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
+                using (var db = new BankContext())
+                {
+                    db.Accounts.Update(acc);
+                    db.Transactions.Add(trans);
+                    db.SaveChanges();
+                }
+
+                Utility.PrintEnterMessage();
+                Console.Clear();
+            }
         }
 
         public static void WithDrawFunds()
         {
             Console.WriteLine("********WITHDRAW FUNDS********");
-            Customer cust = GetCustomer("\nWhich customer owns the account to withdraw funds from? Enter the customer #: ");
-            Console.Clear();
-
-            Console.WriteLine($"{cust.Name} with ID {cust.Id} has the following accounts:\n");
-            int i = 1;
-            foreach (var acct in cust.Accounts)
+            Customer cust = GetCustomer("\nWhich customer owns the account to withdraw funds from? Enter the customer # or -1 to CANCEL THE OPERATION: ");
+            if (cust.Name == "")
             {
-                Console.WriteLine($"Account # {i} - {acct.AccountType} account; Balance {acct.Balance.ToString("C")}; ID {acct.Id}");
-                i++;
+                Console.WriteLine("Operation cancelled.");
+                Utility.PrintEnterMessage();
+                Console.Clear();
             }
-            Account acc = GetAccount(cust, "\nWhich account should the funds be withdrawn from? Enter the account #: ");
-            double amount = Utility.GetNumInput("\nEnter the amount to be withdrawn: ");
-            acc.Balance -= amount;
-            Transaction trans = new Transaction(amount, "Withdraw", acc.Id);
-            Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
-            using (var db = new BankContext())
+            else
             {
-                db.Accounts.Update(acc);
-                db.Transactions.Add(trans);
-                db.SaveChanges();
-            }
+                Console.Clear();
 
-            Utility.PrintEnterMessage();
-            Console.Clear();
+                Console.WriteLine($"{cust.Name} with ID {cust.Id} has the following accounts:\n");
+                int i = 1;
+                foreach (var acct in cust.Accounts)
+                {
+                    Console.WriteLine($"Account # {i} - {acct.AccountType} account; Balance {acct.Balance.ToString("C")}; ID {acct.Id}");
+                    i++;
+                }
+                Account acc = GetAccount(cust, "\nWhich account should the funds be withdrawn from? Enter the account #: ");
+                double amount = Utility.GetNumInput("\nEnter the amount to be withdrawn: ");
+                acc.Balance -= amount;
+                Transaction trans = new Transaction(amount, "Withdraw", acc.Id);
+                Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
+                using (var db = new BankContext())
+                {
+                    db.Accounts.Update(acc);
+                    db.Transactions.Add(trans);
+                    db.SaveChanges();
+                }
+
+                Utility.PrintEnterMessage();
+                Console.Clear();
+            }
         }
 
         public static void QueryAccount()
         {
             Console.WriteLine("********QUERY ACCOUNT TRANSACTIONS********");
-            Customer cust = GetCustomer("\nWhich customer owns the account that you would like to query? Enter the customer #: ");
-            Console.Clear();
-
-            Console.WriteLine($"{cust.Name} with ID {cust.Id} has the following accounts:\n");
-            int i = 1;
-            foreach (var acct in cust.Accounts)
+            Customer cust = GetCustomer("\nWhich customer owns the account that you would like to query? Enter the customer # or -1 to CANCEL THE OPERATION: ");
+            if (cust.Name == "")
             {
-                Console.WriteLine($"Account # {i} - {acct.AccountType} account; Balance {acct.Balance.ToString("C")}; ID {acct.Id}");
-                i++;
+                Console.WriteLine("Operation cancelled.");
+                Utility.PrintEnterMessage();
+                Console.Clear();
             }
-            Account acc = GetAccount(cust, "\nWhich account would you like to query for past transactions? Enter the account #: ");
-            ShowTransactions(acc);
+            else
+            {
+                Console.Clear();
 
-            Utility.PrintEnterMessage();
-            Console.Clear();
+                Console.WriteLine($"{cust.Name} with ID {cust.Id} has the following accounts:\n");
+                int i = 1;
+                foreach (var acct in cust.Accounts)
+                {
+                    Console.WriteLine($"Account # {i} - {acct.AccountType} account; Balance {acct.Balance.ToString("C")}; ID {acct.Id}");
+                    i++;
+                }
+                Account acc = GetAccount(cust, "\nWhich account would you like to query for past transactions? Enter the account #: ");
+                ShowTransactions(acc);
+
+                Utility.PrintEnterMessage();
+                Console.Clear();
+            }
         }
 
         private static Account CreateNewAccount(Guid customerId)
@@ -238,9 +283,15 @@ namespace BankAppUI
         {
             var customers = ViewCustomers();
             string customerNum = Utility.GetRawInput(message);
-            int actualCustNum = int.Parse(customerNum) - 1;
-            Customer cust = customers[actualCustNum];
-            return cust;
+            if (customerNum == "-1")
+            {
+                return new Customer("");
+            } else
+            {
+                int actualCustNum = int.Parse(customerNum) - 1;
+                Customer cust = customers[actualCustNum];
+                return cust;
+            }
         }
 
         private static Account GetAccount(Customer cust, string message)
