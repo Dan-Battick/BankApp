@@ -16,6 +16,9 @@ namespace BankAppUI
             ApplicationScreen();
         }
 
+        /// <summary>
+        /// The main controller for the application.
+        /// </summary>
         public static void ApplicationScreen()
         {
             Console.WriteLine("****************************************Welcome to a simple bank application!****************************************\n");
@@ -33,7 +36,6 @@ namespace BankAppUI
                 case "1":
                     Console.Clear();
                     CreateNewCustomer();
-             
                     ApplicationScreen();
                     break;
                 case "2":
@@ -108,6 +110,11 @@ namespace BankAppUI
                 Console.WriteLine("Operation cancelled.");
                 Utility.PrintEnterMessage();
                 Console.Clear();
+            } 
+            else if (cust.Name == "None")
+            {
+                Utility.PrintEnterMessage();
+                Console.Clear();
             }
             else
             {
@@ -134,6 +141,11 @@ namespace BankAppUI
             if (cust.Name == "")
             {
                 Console.WriteLine("Operation cancelled.");
+                Utility.PrintEnterMessage();
+                Console.Clear();
+            }
+            else if (cust.Name == "None")
+            {
                 Utility.PrintEnterMessage();
                 Console.Clear();
             }
@@ -184,6 +196,11 @@ namespace BankAppUI
                 Utility.PrintEnterMessage();
                 Console.Clear();
             }
+            else if (cust.Name == "None")
+            {
+                Utility.PrintEnterMessage();
+                Console.Clear();
+            }
             else
             {
                 Console.Clear();
@@ -228,6 +245,11 @@ namespace BankAppUI
             if (cust.Name == "")
             {
                 Console.WriteLine("Operation cancelled.");
+                Utility.PrintEnterMessage();
+                Console.Clear();
+            }
+            else if (cust.Name == "None")
+            {
                 Utility.PrintEnterMessage();
                 Console.Clear();
             }
@@ -283,59 +305,72 @@ namespace BankAppUI
             var db = new BankContext();
             var accounts = db.Accounts.ToList();
             List<Customer> customers = new List<Customer>();
-            foreach (var acc in accounts)
+            if (accounts.Count() == 0)
             {
-                var customer = db.Customers.Where(c => c.Id == acc.CustomerId).FirstOrDefault();
-                if (customers.Contains(customer))
-                {
-                    continue;
-                }
-                else
-                {
-                    customers.Add(customer);
-                }
-            }
-            int i = 1;
-            Console.WriteLine("Below is the list of customers:\n");
-            foreach (var cust in customers)
+                Console.WriteLine("No customer has been created as yet.");
+                return new List<Customer>();
+            } else
             {
-                Console.WriteLine($"Customer #{i} - {cust.Name}; {cust.Id}\n\n");
-                i++;
+                foreach (var acc in accounts)
+                {
+                    var customer = db.Customers.Where(c => c.Id == acc.CustomerId).FirstOrDefault();
+                    if (customers.Contains(customer))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        customers.Add(customer);
+                    }
+                }
+                int i = 1;
+                Console.WriteLine("Below is the list of customers:\n");
+                foreach (var cust in customers)
+                {
+                    Console.WriteLine($"Customer #{i} - {cust.Name}; {cust.Id}\n\n");
+                    i++;
+                }
+                return customers;
             }
-            return customers;
         }
 
         private static Customer GetCustomer(string message)
         {
             var customers = ViewCustomers();
-            bool input = false;
-            do
+            if (customers.Count() == 0)
             {
-                try
+                return new Customer("None");
+            } else
+            {
+                bool input = false;
+                do
                 {
-                    string customerNum = Utility.GetRawInput(message);
+                    try
+                    {
+                        string customerNum = Utility.GetRawInput(message);
 
-                    if (customerNum == "-1")
-                    {
-                        return new Customer("");
+                        if (customerNum == "-1")
+                        {
+                            return new Customer("");
+                        }
+                        else
+                        {
+                            int actualCustNum = int.Parse(customerNum) - 1;
+                            Customer cust = customers[actualCustNum];
+                            return cust;
+                        }
                     }
-                    else
+                    catch (Exception e)
                     {
-                        int actualCustNum = int.Parse(customerNum) - 1;
-                        Customer cust = customers[actualCustNum];
-                        return cust;
+                        if ((e is FormatException) || (e is ArgumentOutOfRangeException))
+                        {
+                            Console.WriteLine("Incorrect input. Enter the number that corresponds to the customer of your choice.");
+                            input = false;
+                        }
                     }
-                }
-                catch (Exception e)
-                {
-                    if ((e is FormatException) || (e is ArgumentOutOfRangeException))
-                    {
-                        Console.WriteLine("Incorrect input. Enter the number that corresponds to the customer of your choice.");
-                        input = false;
-                    }
-                }
-            } while (!input);
-            return new Customer("");
+                } while (!input);
+                return new Customer("");
+            }
         }
 
         private static Account GetAccount(Customer cust, string message)
