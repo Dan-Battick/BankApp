@@ -42,7 +42,7 @@ namespace DataAccessLibrary
 
         public override string ToString()
         {
-            return $"{TransactionType}: ${TransactionAmount} on {TransactionDate} done on account {AccountId}";
+            return $"{TransactionType}: {TransactionAmount.ToString("C")} on {TransactionDate} done on account {AccountId}";
         }
     }
 }

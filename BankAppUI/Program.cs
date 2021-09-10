@@ -5,7 +5,6 @@ using DataAccessLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace BankAppUI
 {
@@ -14,18 +13,17 @@ namespace BankAppUI
 
         static void Main(string[] args)
         {
-            HomeScreen();
-            //DepositFunds();
+            ApplicationScreen();
         }
 
-        public static void HomeScreen()
+        public static void ApplicationScreen()
         {
             Console.WriteLine("****************************************Welcome to a simple bank application!****************************************\n");
             Console.WriteLine("1 - Create new customer");
-            Console.WriteLine("2 - Open new account");
+            Console.WriteLine("2 - Open new account for existing customer");
             Console.WriteLine("3 - Deposit funds");
             Console.WriteLine("4 - Withdraw funds");
-            Console.WriteLine("5 - Query account");
+            Console.WriteLine("5 - Query account transactions");
             Console.WriteLine("6 - Exit application");
             Console.Write("\nENTER the number that corresponds to the operation you would like to perform: ");
 
@@ -35,34 +33,38 @@ namespace BankAppUI
                 case "1":
                     Console.Clear();
                     CreateNewCustomer();
-                    HomeScreen();
+                    ApplicationScreen();
                     break;
                 case "2":
                     Console.Clear();
                     OpenNewAccount();
-                    HomeScreen();
+                    ApplicationScreen();
                     break;
                 case "3":
                     Console.Clear();
                     DepositFunds();
-                    HomeScreen();
+                    ApplicationScreen();
                     break;
                 case "4":
                     Console.Clear();
                     WithDrawFunds();
-                    HomeScreen();
+                    ApplicationScreen();
                     break;
                 case "5":
                     Console.Clear();
-                    Console.WriteLine("\nYou would like to query the account!");
+                    QueryAccount();
+                    ApplicationScreen();
                     break;
                 case "6":
                     Console.Clear();
                     Console.WriteLine("\nExiting the application. Have a great day!");
-                    break;
+                    return;
                 default:
                     Console.Clear();
-                    Console.WriteLine("\nIncorrect input. Exiting the application. Have a great day!");
+                    Console.WriteLine("\nIncorrect input. You will be returned to the main screen.");
+                    Utility.PrintEnterMessage();
+                    Console.Clear();
+                    ApplicationScreen();
                     break;
             }
         }
@@ -88,108 +90,23 @@ namespace BankAppUI
             Console.Clear();
         }
 
-        private static Account CreateNewAccount(Guid customerId)
-        {
-            string accountType = Utility.GetRawInput("Account type (Enter the number 1 for SAVINGS OR the number 2 for CHEQUING): ");
-            if (accountType == "1")
-            {
-                accountType = "Savings";
-            }
-            else if (accountType == "2")
-            {
-                accountType = "Chequing";
-            }
-            else
-            {
-                Console.WriteLine("Incorrect input. Please enter only a 1 or a 2 to indicate the account type.");
-            }
-            double startingBalance = Utility.GetNumInput("Enter the starting balance for this account: ");
-            Account acc = new Account(startingBalance, accountType, customerId);
-            return acc;
-        }
-
         public static void OpenNewAccount()
         {
             Console.WriteLine("*********OPEN NEW ACCOUNT*********\n");
-            Console.WriteLine("Would you like to open an account for an existing customer or for a new customer?");
-            string choice = Utility.GetRawInput("1 - Existing Customer    OR     2 - New Customer\nEnter your choice(1 or 2): ");
-            switch (choice)
-            {
-                case "1":
-                    Console.Clear();
-                    OpenAccForExistingCust();
-                    break;
-                case "2":
-                    Console.Clear();
-                    CreateNewCustomer();
-                    break;
-            }
-        }
-
-        public static List<Customer> ViewCustomers()
-        {
-            var db = new BankContext();
-            var accounts = db.Accounts.ToList();
-            List<Customer> customers = new List<Customer>();
-            foreach (var acc in accounts)
-            {
-                //Console.WriteLine(acc);
-                var customer = db.Customers.Where(c => c.Id == acc.CustomerId).FirstOrDefault();
-                //Console.WriteLine(customer);
-                //customer.Accounts.Add(acc);
-                if (customers.Contains(customer))
-                {
-                    continue;
-                }
-                else
-                {
-                    customers.Add(customer);
-                }
-                //Console.WriteLine($"{customer.Name}: {acc.AccountType} account with ID {acc.Id}\n");
-            }
-            int i = 1;
-            Console.WriteLine("Below is the list of customers:");
-            foreach (var cust in customers)
-            {
-                Console.WriteLine($"Customer # {i} - {cust}\n\n");
-                i++;
-            }
-            return customers;
-        }
-
-        private static Customer GetCustomer(string message)
-        {
-            var customers = ViewCustomers();
-            string customerNum = Utility.GetRawInput(message);
-            int actualCustNum = int.Parse(customerNum) - 1;
-            Customer cust = customers[actualCustNum];
-            return cust;
-        } 
-
-        public static void OpenAccForExistingCust()
-        {
-            Customer existingCust = GetCustomer("Which customer would you like to open the new account for? Enter the customer #: ");
+            Customer cust = GetCustomer("Which customer would you like to open the new account for? Enter the customer #: ");
             Console.Clear();
-            Console.WriteLine($"You are opening a new account for {existingCust.Name}, ID {existingCust.Id}");
-            Account acc = CreateNewAccount(existingCust.Id);
+            Console.WriteLine($"You are opening a new account for {cust.Name}, ID {cust.Id}");
+            Account acc = CreateNewAccount(cust.Id);
             using (var db = new BankContext())
             {
                 db.Accounts.Add(acc);
                 db.SaveChanges();
             }
 
-            Console.WriteLine($"New account has been opened for {existingCust.Name}.");
+            Console.WriteLine($"New account has been opened for {cust.Name}.");
             Utility.PrintEnterMessage();
 
             Console.Clear();
-        }
-
-        private static Account GetAccount(Customer cust, string message)
-        {
-            string accountNum = Utility.GetRawInput(message);
-            int actualAccNum = int.Parse(accountNum) - 1;
-            Account acc = cust.Accounts[actualAccNum];
-            return acc;
         }
 
         public static void DepositFunds()
@@ -209,7 +126,7 @@ namespace BankAppUI
             double amount = Utility.GetNumInput("\nEnter the amount to be deposited: ");
             acc.Balance += amount;
             Transaction trans = new Transaction(amount, "Deposit", acc.Id);
-            Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance}");
+            Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
             using (var db = new BankContext())
             {
                 db.Accounts.Update(acc);
@@ -238,7 +155,7 @@ namespace BankAppUI
             double amount = Utility.GetNumInput("\nEnter the amount to be withdrawn: ");
             acc.Balance -= amount;
             Transaction trans = new Transaction(amount, "Withdraw", acc.Id);
-            Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance}");
+            Console.WriteLine($"The account balance had been updated. The current balance is {acc.Balance.ToString("C")}");
             using (var db = new BankContext())
             {
                 db.Accounts.Update(acc);
@@ -248,6 +165,131 @@ namespace BankAppUI
 
             Utility.PrintEnterMessage();
             Console.Clear();
+        }
+
+        public static void QueryAccount()
+        {
+            Console.WriteLine("********QUERY ACCOUNT TRANSACTIONS********");
+            Customer cust = GetCustomer("\nWhich customer owns the account that you would like to query? Enter the customer #: ");
+            Console.Clear();
+
+            Console.WriteLine($"{cust.Name} with ID {cust.Id} has the following accounts:\n");
+            int i = 1;
+            foreach (var acct in cust.Accounts)
+            {
+                Console.WriteLine($"Account # {i} - {acct.AccountType} account; Balance {acct.Balance.ToString("C")}; ID {acct.Id}");
+                i++;
+            }
+            Account acc = GetAccount(cust, "\nWhich account would you like to query for past transactions? Enter the account #: ");
+            ShowTransactions(acc);
+
+            Utility.PrintEnterMessage();
+            Console.Clear();
+        }
+
+        private static Account CreateNewAccount(Guid customerId)
+        {
+            string accountType = Utility.GetRawInput("Account type (Enter the number 1 for SAVINGS OR the number 2 for CHEQUING): ");
+            if (accountType == "1")
+            {
+                accountType = "Savings";
+            }
+            else if (accountType == "2")
+            {
+                accountType = "Chequing";
+            }
+            else
+            {
+                Console.WriteLine("Incorrect input. Please enter only a 1 or a 2 to indicate the account type.");
+            }
+            double startingBalance = Utility.GetNumInput("Enter the starting balance for this account: ");
+            Account acc = new Account(startingBalance, accountType, customerId);
+            return acc;
+        }
+
+        private static List<Customer> ViewCustomers()
+        {
+            var db = new BankContext();
+            var accounts = db.Accounts.ToList();
+            List<Customer> customers = new List<Customer>();
+            foreach (var acc in accounts)
+            {
+                var customer = db.Customers.Where(c => c.Id == acc.CustomerId).FirstOrDefault();
+                if (customers.Contains(customer))
+                {
+                    continue;
+                }
+                else
+                {
+                    customers.Add(customer);
+                }
+            }
+            int i = 1;
+            Console.WriteLine("Below is the list of customers:\n");
+            foreach (var cust in customers)
+            {
+                Console.WriteLine($"Customer #{i} - {cust.Name}; {cust.Id}\n\n");
+                i++;
+            }
+            return customers;
+        }
+
+        private static Customer GetCustomer(string message)
+        {
+            var customers = ViewCustomers();
+            string customerNum = Utility.GetRawInput(message);
+            int actualCustNum = int.Parse(customerNum) - 1;
+            Customer cust = customers[actualCustNum];
+            return cust;
+        }
+
+        private static Account GetAccount(Customer cust, string message)
+        {
+            string accountNum = Utility.GetRawInput(message);
+            int actualAccNum = int.Parse(accountNum) - 1;
+            Account acc = cust.Accounts[actualAccNum];
+            return acc;
+        }
+
+        private static void ShowTransactions(Account acc)
+        {
+            var db = new BankContext();
+            var transactions = db.Transactions.ToList();
+
+            foreach (var trans in transactions)
+            {
+                if (acc.Id == trans.AccountId)
+                {
+                    acc.Transactions.Add(trans);
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            Console.WriteLine($"The current balance of the account is: {acc.Balance.ToString("C")}");
+            Console.WriteLine("Below are the account's last 10 transactions:\n");
+            if (acc.Transactions.Count == 0)
+            {
+                Console.WriteLine("***No transactions have been performed on this account as yet.***");
+            }
+            else if (acc.Transactions.Count >= 1 && acc.Transactions.Count < 10)
+            {
+                //acc.Transactions.Reverse();
+                foreach (Transaction trans in acc.Transactions)
+                {
+                    Console.WriteLine(trans);
+                }
+            }
+            else
+            {
+                //acc.Transactions.Reverse();
+                for (int x = 0; x <= 9; x++)
+                {
+                    Console.WriteLine(acc.Transactions[x]);
+                }
+            }
         }
     }
 }
